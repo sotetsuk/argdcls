@@ -1,15 +1,18 @@
-name: build
+name: py
 
 on: [push]
 
 jobs:
   py:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9']
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
-        python-version: '3.8'
+        python-version: ${{ matrix.python-version  }}
         architecture: 'x64'
     - name: Run image
       uses: abatilo/actions-poetry@v2.0.0
