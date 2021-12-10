@@ -47,7 +47,7 @@ class Config:
 
         assert param_t in ["", "+", "++"]
         assert "=" not in key
-        return param_t, key, val
+        return param_t, key, x
 
 
 def _is_num(n: str):
