@@ -11,6 +11,10 @@ jobs:
       with:
         python-version: '3.8'
         architecture: 'x64'
+    - name: Run image
+      uses: abatilo/actions-poetry@v2.0.0
+      with:
+        poetry-version: 1.0
     - name: install
       run: |
         make install
