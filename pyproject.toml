@@ -1,9 +1,9 @@
 [tool.black]
-line-length = 79
+line-length = 99
 
 # https://black.readthedocs.io/en/stable/compatible_configs.html
 [flake8]
-max-line-length = 79
+max-line-length = 99
 max-complexity = 18
 extend-ignore = ['E203', 'E501', 'W503']
 
@@ -14,8 +14,30 @@ include_trailing_comma = true
 force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
-line_length = 79
+line_length = 99
 
 [mypy]
 # strict = 1
 ignore_missing_imports = 1
+
+[tool.poetry]
+name = "argdcls"
+version = "0.1.0"
+description = ""
+authors = ["Sotetsu KOYAMADA <koyamada-s@sys.i.kyoto-u.ac.jp>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[tool.poetry.dev-dependencies]
+black = "^21.11b1"
+blackdoc = "^0.3.4"
+pytest = "^6.2.5"
+isort = "^5.10.1"
+jupyter = "^1.0.0"
+mypy = "^0.910"
+flake8 = "^4.0.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

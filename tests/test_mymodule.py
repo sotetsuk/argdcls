@@ -1,4 +1,4 @@
-from mypkg.mymodule import fizzbuzz
+from argdcls.mymodule import fizzbuzz
 
 
 def test_fizzbuzz() -> None:
