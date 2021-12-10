@@ -31,18 +31,19 @@ class Config:
         assert len(s.split("=")) == 2
         key, val = s.split("=")
 
+        x: Any = val
         # parse val
-        if val == "None":
-            val = None
-        elif val == "True":
-            val = True
-        elif val == "False":
-            val = False
-        elif _is_num(val):
-            if _is_integer(val):
-                val = int(val)
+        if x == "None":
+            x = None
+        elif x == "True":
+            x = True
+        elif x == "False":
+            x = False
+        elif _is_num(x):
+            if _is_integer(x):
+                x = int(x)
             else:
-                val = float(val)
+                x = float(x)
 
         assert param_t in ["", "+", "++"]
         assert "=" not in key
