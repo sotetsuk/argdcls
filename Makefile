@@ -1,8 +1,5 @@
-.PHONY: clean format check install uninstall test pypi
+.PHONY: clean fmt check install test
 
-venv:
-	which python3
-	python3 -m venv venv
 
 clean:
 	rm -rf build
@@ -10,23 +7,20 @@ clean:
 	rm -rf *.egg-info
 	find . -name "*pycache*" | xargs rm -rf
 
-format:
-	black argdcls
-	blackdoc argdcls
-	isort argdcls
+fmt:
+	poetry run black argdcls tests
+	poetry run blackdoc argdcls tests
+	poetry run isort argdcls tests
 
 check:
-	black argdcls --check --diff
-	blackdoc argdcls --check
-	flake8 --config pyproject.toml --ignore E203,E501,W503 argdcls
-	mypy --config pyproject.toml argdcls
-	isort argdcls --check --diff
+	poetry run black argdcls tests --check --diff
+	poetry run blackdoc argdcls tests --check
+	poetry run flake8 --config pyproject.toml --ignore E203,E501,W503 argdcls tests
+	poetry run mypy --config pyproject.toml argdcls tests
+	poetry run isort argdcls tests --check --diff
 
 install:
-	python3 setup.py install
-
-uninstall:
-	python3 -m pip uninstall argdcls -y
+	poetry install
 
 test:
-	python3 -m pytest --doctest-modules
+	poetry run python3 -m pytest --doctest-modules argdcls tests
