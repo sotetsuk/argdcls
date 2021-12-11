@@ -10,7 +10,7 @@ def load(datacls, inputs: Optional[List[str]] = None):
     params = [_parse(s) for s in inputs]
 
     # Each key is unique
-    keys = defaultdict(int)
+    keys: defaultdict = defaultdict(int)
     for _, key, _ in params:
         keys[key] += 1
     assert all([v == 1 for k, v in keys.items()])
