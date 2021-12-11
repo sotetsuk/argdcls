@@ -1,53 +1,57 @@
 import sys
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Type, TypeVar
+
+T = TypeVar("T")
 
 
-class Config:
-    def __init__(self, inputs: Optional[List[str]] = None) -> None:
-        if inputs is None:
-            inputs = sys.argv[1:]
-        self._load_params(inputs)
+def load(datacls: Type[T], inputs: Optional[List[str]] = None) -> T:
+    if inputs is None:
+        inputs = sys.argv[1:]
+    args = {}
+    for s in inputs:
+        param_t, key, val = _parse(s)
+        if param_t == "":
+            args[key] = val
 
-    def _load_params(self, inputs: List[str]) -> None:
-        pass
+    return datacls(**args)
 
-    @staticmethod
-    def _parse(
-        s: str,
-    ) -> Tuple[str, str, Any]:
-        s = s.strip().strip("\n")
 
-        # parse param_t
-        param_t = ""
-        if s.startswith("++"):
-            param_t = "++"
-            s = s[2:]
-        if s.startswith("+"):
-            param_t = "+"
-            s = s[1:]
+def _parse(
+    s: str,
+) -> Tuple[str, str, Any]:
+    s = s.strip().strip("\n")
 
-        # parse key
-        assert "=" in s
-        assert len(s.split("=")) == 2
-        key, val = s.split("=")
+    # parse param_t
+    param_t = ""
+    if s.startswith("++"):
+        param_t = "++"
+        s = s[2:]
+    if s.startswith("+"):
+        param_t = "+"
+        s = s[1:]
 
-        x: Any = val
-        # parse val
-        if x == "None":
-            x = None
-        elif x == "True":
-            x = True
-        elif x == "False":
-            x = False
-        elif _is_num(x):
-            if _is_integer(x):
-                x = int(x)
-            else:
-                x = float(x)
+    # parse key
+    assert "=" in s
+    assert len(s.split("=")) == 2
+    key, val = s.split("=")
 
-        assert param_t in ["", "+", "++"]
-        assert "=" not in key
-        return param_t, key, x
+    x: Any = val
+    # parse val
+    if x == "None":
+        x = None
+    elif x == "True":
+        x = True
+    elif x == "False":
+        x = False
+    elif _is_num(x):
+        if _is_integer(x):
+            x = int(x)
+        else:
+            x = float(x)
+
+    assert param_t in ["", "+", "++"]
+    assert "=" not in key
+    return param_t, key, x
 
 
 def _is_num(n: str):
