@@ -1,9 +1,9 @@
-name: py
+name: ci
 
 on: [push]
 
 jobs:
-  py:
+  ci:
     runs-on: ubuntu-latest
     strategy:
       matrix:
