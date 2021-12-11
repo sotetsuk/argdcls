@@ -15,7 +15,7 @@ def load(datacls, inputs: Optional[List[str]] = None):
         keys[key] += 1
     assert all([v == 1 for k, v in keys.items()])
 
-    a_fields = [(key, val) for param_t, key, val in params if param_t == "*"]
+    a_fields = [(key, val) for param_t, key, val in params if param_t == "@"]
     n_fields = [(key, val) for param_t, key, val in params if param_t == ""]
     p_fields = [(key, val) for param_t, key, val in params if param_t == "+"]
     pp_fields = [(key, val) for param_t, key, val in params if param_t == "++"]
@@ -23,7 +23,7 @@ def load(datacls, inputs: Optional[List[str]] = None):
     field_defaults = {f.name: f.default for f in fields(datacls)}
     field_names = [f.name for f in fields(datacls)]
 
-    # assert "*" params
+    # assert "@" params
     for key, val in a_fields:
         assert (
             type(field_defaults[key]) == _MISSING_TYPE
@@ -85,8 +85,8 @@ def _parse(
     if s.startswith("+"):
         param_t = "+"
         s = s[1:]
-    if s.startswith("*"):
-        param_t = "*"
+    if s.startswith("@"):
+        param_t = "@"
         s = s[1:]
 
     # parse key
@@ -108,7 +108,7 @@ def _parse(
         else:
             x = float(x)
 
-    assert param_t in ["", "*", "+", "++"]
+    assert param_t in ["", "@", "+", "++"]
     assert "=" not in key
     return param_t, key, x
 
