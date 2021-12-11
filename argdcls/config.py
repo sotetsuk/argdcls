@@ -6,12 +6,22 @@ def load(datacls, inputs: Optional[List[str]] = None):
     if inputs is None:
         inputs = sys.argv[1:]
     args = {}
-    for s in inputs:
-        param_t, key, val = _parse(s)
+    params = [_parse(s) for s in inputs]
+
+    for param_t, key, val in params:
         if param_t == "":
             args[key] = val
 
-    return datacls(**args)
+    data = datacls(**args)
+
+    for param_t, key, val in params:
+        if param_t == "+":
+            assert hasattr(data, key)
+            setattr(data, key, val)
+        if param_t == "++":
+            setattr(data, key, val)
+
+    return data
 
 
 def _parse(
