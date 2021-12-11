@@ -1,4 +1,6 @@
 [![ci](https://github.com/sotetsuk/argdcls/actions/workflows/ci.yml/badge.svg)](https://github.com/sotetsuk/argdcls/actions/workflows/ci.yml)
+[![python-version](https://img.shields.io/pypi/pyversions/argdcls)](https://pypi.org/project/argdcls)
+[![pypi](https://img.shields.io/pypi/v/argdcls)](https://pypi.org/project/argdcls)
 
 # Argdcls
 
