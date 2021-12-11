@@ -1,4 +1,5 @@
 import sys
+from collections import defaultdict
 from dataclasses import _MISSING_TYPE, field, fields, make_dataclass
 from typing import Any, List, Optional, Tuple
 
@@ -7,30 +8,60 @@ def load(datacls, inputs: Optional[List[str]] = None):
     if inputs is None:
         inputs = sys.argv[1:]
     params = [_parse(s) for s in inputs]
-    require_fields = [(key, val) for param_t, key, val in params if param_t == ""]
-    override_fields = [(key, val) for param_t, key, val in params if param_t == "+"]
-    new_fields = [(key, val) for param_t, key, val in params if param_t == "++"]
+
+    # Each key is unique
+    keys: defaultdict = defaultdict(int)
+    for _, key, _ in params:
+        keys[key] += 1
+    assert all([v == 1 for k, v in keys.items()])
+
+    a_fields = [(key, val) for param_t, key, val in params if param_t == "@"]
+    n_fields = [(key, val) for param_t, key, val in params if param_t == ""]
+    p_fields = [(key, val) for param_t, key, val in params if param_t == "+"]
+    pp_fields = [(key, val) for param_t, key, val in params if param_t == "++"]
 
     field_defaults = {f.name: f.default for f in fields(datacls)}
-    for key, val in require_fields:
+    field_names = [f.name for f in fields(datacls)]
+
+    # assert "@" params
+    for key, val in a_fields:
         assert (
             type(field_defaults[key]) == _MISSING_TYPE
-        ), f'Parameter "{key}" must have no default value but have default value: "{field_defaults[key]}". You may use "+{key}={val}" instead.'
-    x = datacls(**dict(require_fields))
+        ), f'Parameter "{key}" must have no default value but have default value: "{field_defaults[key]}". You may use "{key}={val}" instead.'
+        assert (
+            key in field_defaults
+        ), f'Parameter "{key}" not in {field_names}. You may use "+{key}={val}" instead.'
 
-    field_names = [f.name for f in fields(x)]
-    # add "+" params
-    for key, val in override_fields:
+    # assert "" params
+    for key, val in n_fields:
         assert (
             key in field_names
-        ), f'Parameter "{key}" not in {field_names}. You may use "++{key}={val}" instead.'
-        setattr(x, key, val)
+        ), f'Parameter "{key}" not in {field_names}. You may use "+{key}={val}" instead.'
 
-    # set "++" params
-    for key, val in new_fields:
+    # assert "+" fields
+    for key, val in p_fields:
         assert (
             key not in field_names
-        ), f'Parameter "{key}" in {field_names}. You may use "+{key}={val}" instead.'
+        ), f'Parameter "{key}" in {field_names}. You may use "{key}={val}" instead.'
+
+    # set required params
+    require_fields = []
+    for key, val in a_fields + n_fields + pp_fields:
+        if key in field_names and type(field_defaults[key]) == _MISSING_TYPE:
+            require_fields.append((key, val))
+
+    x = datacls(**dict(require_fields))
+
+    # set override params
+    for key, val in n_fields + pp_fields:
+        if key in field_names:
+            setattr(x, key, val)
+
+    # set new params
+    new_fields = []
+    for key, val in p_fields + pp_fields:
+        if key not in field_names:
+            new_fields.append((key, val))
 
     x.__class__ = make_dataclass(
         datacls.__name__,
@@ -54,6 +85,9 @@ def _parse(
     if s.startswith("+"):
         param_t = "+"
         s = s[1:]
+    if s.startswith("@"):
+        param_t = "@"
+        s = s[1:]
 
     # parse key
     assert "=" in s
@@ -74,7 +108,7 @@ def _parse(
         else:
             x = float(x)
 
-    assert param_t in ["", "+", "++"]
+    assert param_t in ["", "@", "+", "++"]
     assert "=" not in key
     return param_t, key, x
 
