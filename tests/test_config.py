@@ -11,33 +11,48 @@ class Config:
 
 
 def test_load_params():
-    # no +/++
-    config = argdcls.load(Config, ["lr=0.1"])
-    assert config.lr == 0.1
+    # "*"
+    config = argdcls.load(Config, ["*lr=1.0"])
+    assert config.lr == 1.0
 
-    # ++
-    config = argdcls.load(Config, ["lr=0.1", "+adam=True"])
+    # ""
+    config = argdcls.load(Config, ["lr=1.0", "adam=True"])
+    assert config.lr == 1.0
     assert config.adam
 
-    # ++
-    config = argdcls.load(Config, ["lr=0.1", "++addon=3"])
+    # "+"
+    config = argdcls.load(Config, ["lr=1.0", "+addon=3"])
+    assert config.lr == 1.0
+    assert not config.adam
+    assert config.addon == 3  # type: ignore
+
+    # "++"
+    config = argdcls.load(Config, ["++lr=1.0", "++adam=True", "++addon=3"])
+    assert config.lr == 1.0
+    assert config.adam
     assert config.addon == 3  # type: ignore
 
 
 def test_parse():
-    # no +/++
+    # "*"
+    param_t, key, val = _parse("*lr=1.0")
+    assert param_t == "*"
+    assert key == "lr"
+    assert val == 1.0
+
+    # ""
     param_t, key, val = _parse("lr=1.0")
     assert param_t == ""
     assert key == "lr"
     assert val == 1.0
 
-    # +
+    # "+"
     param_t, key, val = _parse("+lr=1.0")
     assert param_t == "+"
     assert key == "lr"
     assert val == 1.0
 
-    # ++
+    # "++"
     param_t, key, val = _parse("++lr=1.0")
     assert param_t == "++"
     assert key == "lr"

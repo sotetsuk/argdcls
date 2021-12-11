@@ -29,5 +29,11 @@ True
 results
 ```
 
+|| `*param` | `param` | `+param` | `++param` |
+|:---|:---:|:---:|:---:|:---:|
+|w/o default value|OK|OK|Error|OK|
+|w/ default value|Error|OK|Error|OK|
+|not dfined|Error|Error|OK|OK|
+
 ## License
 MIT
