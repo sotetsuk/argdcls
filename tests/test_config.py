@@ -26,19 +26,19 @@ def test_load_params():
 
 def test_parse():
     # no +/++
-    param_t, key, val = _parse("lr=0.1")
+    param_t, key, val = _parse("lr=1.0")
     assert param_t == ""
     assert key == "lr"
-    assert val == 0.1
+    assert val == 1.0
 
     # +
-    param_t, key, val = _parse("+lr=0.1")
+    param_t, key, val = _parse("+lr=1.0")
     assert param_t == "+"
     assert key == "lr"
-    assert val == 0.1
+    assert val == 1.0
 
     # ++
-    param_t, key, val = _parse("++lr=0.1")
+    param_t, key, val = _parse("++lr=1.0")
     assert param_t == "++"
     assert key == "lr"
-    assert val == 0.1
+    assert val == 1.0

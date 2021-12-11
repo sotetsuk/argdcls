@@ -72,4 +72,8 @@ def _is_num(n: str):
 
 def _is_integer(n: str):
     assert _is_num(n)
-    return float(n).is_integer()
+    try:
+        int(n)
+        return True
+    except ValueError:
+        return False
