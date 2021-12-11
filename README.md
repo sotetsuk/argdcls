@@ -17,19 +17,17 @@ class Config:
 
 
 config = argdcls.load(Config)
-print(config.lr)
-print(config.adam)
-print(config.outdir)  # type: ignore
+print(config)
 ```
 
 ```sh
-$ python3 main.py lr=1.0 +adam=True ++outdir="results"
-1.0
-True
-results
+$ python3 main.py @lr=1.0
+Config(lr=1.0, adam=False)
+$ python3 main.py lr=1.0 adam=True +outdir=results
+Config(lr=1.0, adam=True, outdir='result')
 ```
 
-|| `*param` | `param` | `+param` | `++param` |
+|| `@param` | `param` | `+param` | `++param` |
 |:---|:---:|:---:|:---:|:---:|
 |w/o default value|OK|OK|Error|OK|
 |w/ default value|Error|OK|Error|OK|
