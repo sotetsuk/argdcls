@@ -1,5 +1,5 @@
 import sys
-from dataclasses import field, fields, make_dataclass
+from dataclasses import _MISSING_TYPE, field, fields, make_dataclass
 from typing import Any, List, Optional, Tuple
 
 
@@ -11,6 +11,11 @@ def load(datacls, inputs: Optional[List[str]] = None):
     override_fields = [(key, val) for param_t, key, val in params if param_t == "+"]
     new_fields = [(key, val) for param_t, key, val in params if param_t == "++"]
 
+    field_defaults = {f.name: f.default for f in fields(datacls)}
+    for key, val in require_fields:
+        assert (
+            type(field_defaults[key]) == _MISSING_TYPE
+        ), f'Parameter "{key}" must have no default value but have default value: "{field_defaults[key]}". You may use "+{key}={val}" instead.'
     x = datacls(**dict(require_fields))
 
     # add "+" params
