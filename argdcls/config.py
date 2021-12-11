@@ -21,7 +21,9 @@ def load(datacls, inputs: Optional[List[str]] = None):
     field_names = [f.name for f in fields(x)]
     # add "+" params
     for key, val in override_fields:
-        assert key in field_names, f'Parameter "{key}" not in {field_names}. You may use "++{key}={val}" instead.'
+        assert (
+            key in field_names
+        ), f'Parameter "{key}" not in {field_names}. You may use "++{key}={val}" instead.'
         setattr(x, key, val)
 
     # set "++" params
