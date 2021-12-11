@@ -18,13 +18,20 @@ def load(datacls, inputs: Optional[List[str]] = None):
         ), f'Parameter "{key}" must have no default value but have default value: "{field_defaults[key]}". You may use "+{key}={val}" instead.'
     x = datacls(**dict(require_fields))
 
-    # add "+" params
     field_names = [f.name for f in fields(x)]
+    # add "+" params
     for key, val in override_fields:
-        assert key in field_names, f"{key} not in {field_names}"
+        assert (
+            key in field_names
+        ), f'Parameter "{key}" not in {field_names}. You may use "++{key}={val}" instead.'
         setattr(x, key, val)
 
     # set "++" params
+    for key, val in new_fields:
+        assert (
+            key not in field_names
+        ), f'Parameter "{key}" in {field_names}. You may use "+{key}={val}" instead.'
+
     x.__class__ = make_dataclass(
         datacls.__name__,
         [(key, type(val), field(default=val)) for key, val in new_fields],
