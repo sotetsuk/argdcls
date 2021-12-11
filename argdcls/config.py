@@ -1,27 +1,32 @@
 import sys
+from dataclasses import field, fields, make_dataclass
 from typing import Any, List, Optional, Tuple
 
 
 def load(datacls, inputs: Optional[List[str]] = None):
     if inputs is None:
         inputs = sys.argv[1:]
-    args = {}
     params = [_parse(s) for s in inputs]
+    require_fields = [(key, val) for param_t, key, val in params if param_t == ""]
+    override_fields = [(key, val) for param_t, key, val in params if param_t == "+"]
+    new_fields = [(key, val) for param_t, key, val in params if param_t == "++"]
 
-    for param_t, key, val in params:
-        if param_t == "":
-            args[key] = val
+    x = datacls(**dict(require_fields))
 
-    data = datacls(**args)
+    # add "+" params
+    field_names = [f.name for f in fields(x)]
+    for key, val in override_fields:
+        assert key in field_names, f"{key} not in {field_names}"
+        setattr(x, key, val)
 
-    for param_t, key, val in params:
-        if param_t == "+":
-            assert hasattr(data, key)
-            setattr(data, key, val)
-        if param_t == "++":
-            setattr(data, key, val)
+    # set "++" params
+    x.__class__ = make_dataclass(
+        datacls.__name__,
+        [(key, type(val), field(default=val)) for key, val in new_fields],
+        bases=(datacls,),
+    )
 
-    return data
+    return x
 
 
 def _parse(
