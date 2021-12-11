@@ -1,10 +1,8 @@
 import sys
-from typing import Any, List, Optional, Tuple, Type, TypeVar
-
-T = TypeVar("T")
+from typing import Any, List, Optional, Tuple
 
 
-def load(datacls: Type[T], inputs: Optional[List[str]] = None) -> T:
+def load(datacls, inputs: Optional[List[str]] = None):
     if inputs is None:
         inputs = sys.argv[1:]
     args = {}
