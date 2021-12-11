@@ -1,6 +1,18 @@
 from dataclasses import dataclass
 
-from argdcls.config import _parse, load
+import argdcls
+from argdcls.config import _parse
+
+
+@dataclass
+class Config:
+    lr: float
+
+
+def test_load_params():
+    # no +/++
+    config = argdcls.load(Config, ["lr=0.1"])
+    assert config.lr == 0.1
 
 
 def test_parse():
@@ -21,14 +33,3 @@ def test_parse():
     assert param_t == "++"
     assert key == "lr"
     assert val == 0.1
-
-
-@dataclass
-class Config:
-    lr: float
-
-
-def test_load_params():
-    # no +/++
-    config = load(Config, ["lr=0.1"])
-    assert config.lr == 0.1
