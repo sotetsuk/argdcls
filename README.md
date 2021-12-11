@@ -1,3 +1,5 @@
+[![ci](https://github.com/sotetsuk/argdcls/actions/workflows/ci.yml/badge.svg)](https://github.com/sotetsuk/argdcls/actions/workflows/ci.yml)
+
 # Argdcls
 
 A simple tool to use dataclass as your config
