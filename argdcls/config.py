@@ -1,5 +1,4 @@
 import sys
-from collections import defaultdict
 from dataclasses import _MISSING_TYPE, field, fields, make_dataclass
 from typing import Any, List, Optional, Tuple
 
@@ -10,10 +9,11 @@ def load(datacls, inputs: Optional[List[str]] = None):
     params = [_parse(s) for s in inputs]
 
     # Each key is unique
-    keys: defaultdict = defaultdict(int)
+    keys = set([])
     for _, key, _ in params:
-        keys[key] += 1
-    assert all([v == 1 for k, v in keys.items()])
+        if key in keys:
+            raise ValueError(f"There are duplicate parameters: {key}")
+        keys.add(key)
 
     a_fields = [(key, val) for param_t, key, val in params if param_t == "@"]
     n_fields = [(key, val) for param_t, key, val in params if param_t == ""]
@@ -25,24 +25,28 @@ def load(datacls, inputs: Optional[List[str]] = None):
 
     # assert "@" params
     for key, val in a_fields:
-        assert (
-            type(field_defaults[key]) == _MISSING_TYPE
-        ), f'Parameter "{key}" must have no default value but have default value: "{field_defaults[key]}". You may use "{key}={val}" instead.'
-        assert (
-            key in field_defaults
-        ), f'Parameter "{key}" not in {field_names}. You may use "+{key}={val}" instead.'
+        if type(field_defaults[key]) != _MISSING_TYPE:
+            raise ValueError(
+                f'Parameter "{key}" must have no default value but have default value: "{field_defaults[key]}". You may use "{key}={val}" instead.'
+            )
+        if key not in field_defaults:
+            raise ValueError(
+                f'Parameter "{key}" not in {field_names}. You may use "+{key}={val}" instead.'
+            )
 
     # assert "" params
     for key, val in n_fields:
-        assert (
-            key in field_names
-        ), f'Parameter "{key}" not in {field_names}. You may use "+{key}={val}" instead.'
+        if key not in field_names:
+            raise ValueError(
+                f'Parameter "{key}" not in {field_names}. You may use "+{key}={val}" instead.'
+            )
 
     # assert "+" fields
     for key, val in p_fields:
-        assert (
-            key not in field_names
-        ), f'Parameter "{key}" in {field_names}. You may use "{key}={val}" instead.'
+        if key in field_names:
+            raise ValueError(
+                f'Parameter "{key}" in {field_names}. You may use "{key}={val}" instead.'
+            )
 
     # set required params
     require_fields = []
@@ -90,8 +94,10 @@ def _parse(
         s = s[1:]
 
     # parse key
-    assert "=" in s
-    assert len(s.split("=")) == 2
+    if "=" not in s:
+        raise ValueError(f"You may have forgot to use = for specifying parametsrs: {s}")
+    if len(s.split("=")) != 2:
+        raise ValueError(f"Wrong parameter inputs: {s}")
     key, val = s.split("=")
 
     x: Any = val
@@ -108,8 +114,10 @@ def _parse(
         else:
             x = float(x)
 
-    assert param_t in ["", "@", "+", "++"]
-    assert "=" not in key
+    if param_t not in ["", "@", "+", "++"]:
+        raise ValueError("Wrong parameter type is specified: f{param_t}")
+    if "=" in key:
+        raise ValueError("Wrong parameter key: f{key}")
     return param_t, key, x
 
 
