@@ -1,5 +1,4 @@
 import sys
-from collections import defaultdict
 from dataclasses import _MISSING_TYPE, field, fields, make_dataclass
 from typing import Any, List, Optional, Tuple
 
@@ -98,7 +97,7 @@ def _parse(
     if "=" not in s:
         raise ValueError(f"You may have forgot to use = for specifying parametsrs: {s}")
     if len(s.split("=")) != 2:
-        raise ValueError(f("Wrong parameter inputs: {s}"))
+        raise ValueError(f"Wrong parameter inputs: {s}")
     key, val = s.split("=")
 
     x: Any = val
