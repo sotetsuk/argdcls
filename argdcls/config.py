@@ -1,9 +1,11 @@
 import sys
 from dataclasses import _MISSING_TYPE, field, fields, make_dataclass
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Type, TypeVar
+
+T = TypeVar("T")
 
 
-def load(datacls, inputs: Optional[List[str]] = None):
+def load(datacls: Type[T], inputs: Optional[List[str]] = None) -> T:
     if inputs is None:
         inputs = sys.argv[1:]
     params = [_parse(s) for s in inputs]
@@ -54,7 +56,7 @@ def load(datacls, inputs: Optional[List[str]] = None):
         if key in field_names and type(field_defaults[key]) == _MISSING_TYPE:
             require_fields.append((key, val))
 
-    x = datacls(**dict(require_fields))
+    x: T = datacls(**dict(require_fields))
 
     # set override params
     for key, val in n_fields + pp_fields:
