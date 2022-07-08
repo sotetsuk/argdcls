@@ -29,6 +29,14 @@ def test_error_cases():
         _ = argdcls.load(Config, ["lr=1.0", "adm=True"])
     assert str(e.value) == "Parameter \"adm\" is not in the dataclass fields: ['lr', 'adam']."
 
+    # avoid overriding
+    with pytest.raises(Exception) as e:
+        _ = argdcls.load(Config, ["@adam=True"])
+    assert (
+        str(e.value)
+        == 'Parameter "adam" must have no default value but have default value: "False". You may use "adam=True" instead.'
+    )
+
 
 def test_parse():
     # "@"
