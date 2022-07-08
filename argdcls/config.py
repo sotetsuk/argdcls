@@ -56,7 +56,7 @@ def load(datacls: Type[T], inputs: Optional[List[str]] = None) -> T:
         if key in field_names and type(field_defaults[key]) == _MISSING_TYPE:
             require_fields.append((key, val))
 
-    x: T = datacls(**dict(require_fields))
+    x = datacls(**dict(require_fields))  # type: ignore
 
     # set override params
     for key, val in n_fields + pp_fields:
