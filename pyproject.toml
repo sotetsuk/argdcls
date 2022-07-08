@@ -22,7 +22,7 @@ ignore_missing_imports = 1
 
 [tool.poetry]
 name = "argdcls"
-version = "0.3.2"
+version = "0.4.0"
 description = "A simple tool to use dataclass as your config"
 authors = ["Sotetsu KOYAMADA <koyamada-s@sys.i.kyoto-u.ac.jp>"]
 readme = "README.md"
