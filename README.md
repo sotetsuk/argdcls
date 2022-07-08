@@ -27,15 +27,11 @@ print(config)
 ```sh
 $ python3 main.py @lr=1.0
 Config(lr=1.0, adam=False)
-$ python3 main.py lr=1.0 adam=True +outdir=results
-Config(lr=1.0, adam=True, outdir='result')
+$ python3 main.py lr=1.0 adam=True
+Config(lr=1.0, adam=True)
 ```
 
-|| `@param` | `param` | `+param` | `++param` |
-|:---|:---:|:---:|:---:|:---:|
-|w/o default value|OK|OK|Error|OK|
-|w/ default value|Error|OK|Error|OK|
-|not dfined|Error|Error|OK|OK|
+`@param=value` avoids overwriting the default values.
 
 ## License
 MIT
