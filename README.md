@@ -4,7 +4,7 @@
 
 # Argdcls
 
-A simple tool to use dataclass as your config
+A simple tool to use dataclass as your config.
 
 ## Usage
 
@@ -29,9 +29,17 @@ $ python3 main.py @lr=1.0
 Config(lr=1.0, adam=False)
 $ python3 main.py lr=1.0 adam=True
 Config(lr=1.0, adam=True)
+$ python3 main.py lr=1.0 adm=True # typo!
+Parameter \"adm\" is not in the dataclass fields: ['lr', 'adam'].
+$ python3 main.py lr=1.0 @adam=True # avoid overwriting
+Parameter "adam" must have no default value but have default value: "False". You may use "adam=True" instead.
 ```
 
 `@param=value` avoids overwriting the default values.
+
+## Benefits
+
+* Attribute suggestions from IDEs (e.g., `config.a<tab>` indicates `config.adam`)
 
 ## License
 MIT
