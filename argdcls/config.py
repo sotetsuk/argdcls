@@ -26,7 +26,7 @@ def load(datacls: Type[T], inputs: Optional[List[str]] = None) -> T:
     # assert that all keys are in dataclass
     for key, val in a_fields + n_fields:
         if key not in field_names:
-            raise ValueError(f'Parameter "{key}" is not in the dataclass fields.')
+            raise ValueError(f'Parameter "{key}" is not in the dataclass fields: {field_names}.')
 
     # assert "@" params
     for key, val in a_fields:
